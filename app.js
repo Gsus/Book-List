@@ -24,7 +24,7 @@ UI.prototype.addBookToList = function(book){
   list.appendChild(row);
 }
 
-// Show error message
+// Show message
 UI.prototype.showAlert = function(message, className){
   // Create div
   const div = document.createElement('div');
@@ -44,6 +44,11 @@ UI.prototype.showAlert = function(message, className){
   }, 3000);
 }
 
+// Delete book
+UI.prototype.deleteBook = function(target){
+  target.parentElement.parentElement.remove();
+}
+
 // Clear fields
 UI.prototype.clearFields = function(){
   document.querySelector('#title').value = '';
@@ -51,8 +56,9 @@ UI.prototype.clearFields = function(){
   document.querySelector('#isbn').value = '';
 }
 
-// Add event listeners
+// Event listener for add book
 const form = document.querySelector('#book-form');
+
 form.addEventListener('submit', function(e){
   // Get form values
   const title = document.querySelector('#title').value,
@@ -65,9 +71,10 @@ form.addEventListener('submit', function(e){
   // Instantiate UI
   const ui = new UI();
 
+  // Validate
   if (title === '' || author === '' || isbn === '') {
     // Show error message
-    ui.showAlert('Please fill in all the fields', 'error');
+    ui.showAlert('Please fill in all fields', 'error');
   } else {
     // Add book to list
     ui.addBookToList(book);
@@ -75,6 +82,24 @@ form.addEventListener('submit', function(e){
     ui.showAlert('Book added', 'success');
     // Clear fields
     ui.clearFields();
+  }
+
+  e.preventDefault();
+});
+
+// Event listener for delete book
+const bookList = document.querySelector('#book-list');
+
+bookList.addEventListener('click', function(e){
+  if (e.target.className === 'delete') {
+    // Instantiate UI
+    const ui = new UI();
+
+    // Delete book
+    ui.deleteBook(e.target);
+    
+    // Show message
+    ui.showAlert('Book removed!', 'success');
   }
 
   e.preventDefault();
