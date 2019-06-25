@@ -53,7 +53,7 @@ class UI {
 }
 
 class Store {
-  static getBooks(){
+  static getBooks() {
     let books;
     // Check if there are books already in LS
     if (localStorage.getItem('books') === null) { // If there aren't
@@ -61,23 +61,22 @@ class Store {
     } else { // Fetch 'em
       books = JSON.parse(localStorage.getItem('books'));
     }
-    console.log(books);
     return books;
   }
 
-  static displayBooks(){
+  static displayBooks() {
     const books = Store.getBooks();
 
     // Loop through books in LS and add 'em to the UI
-    books.forEach(function(book){
+    books.forEach(function (book) {
       const ui = new UI;
 
       ui.addBookToList(book);
     });
   }
 
-  static addBook(book){
-    let books = Store.getBooks();
+  static addBook(book) {
+    const books = Store.getBooks();
 
     books.push(book);
 
@@ -85,8 +84,16 @@ class Store {
     localStorage.setItem('books', JSON.stringify(books));
   }
 
-  static removeBook(){
+  static removeBook(isbn) {
+    const books = Store.getBooks();
 
+    books.forEach(function (book, index) {
+      if (isbn === book.isbn) {
+        books.splice(index, 1);
+      }
+    });
+    // Update local storage
+    localStorage.setItem('books', JSON.stringify(books));
   }
 }
 
@@ -134,8 +141,11 @@ bookList.addEventListener('click', function (e) {
     // Instantiate UI
     const ui = new UI();
 
-    // Delete book
+    // Delete book from UI
     ui.deleteBook(e.target);
+
+    // Remove book from LS
+    Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
     // Show message
     ui.showAlert('Book removed!', 'success');
